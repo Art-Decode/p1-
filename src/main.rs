@@ -5,6 +5,8 @@ mod palette;
 use palette::Palette;
 
 const PALETTE: [u32; 4] = [0x142850, 0x27496d, 0x0c7b93, 0x00a8cc];
+const W: u32 = 600;
+const H: u32 = 600;
 
 struct Model {
     ellipse_offset: f32
@@ -26,8 +28,8 @@ fn view(app: &App, model: &Model, frame: Frame) {
     let draw = app.draw();
 
     draw.line()
-        .start(pt2(random_range::<f32>(-300.0, 300.0), random_range::<f32>(-300.0, 300.0)))
-        .end(pt2(random_range::<f32>(-100.0, 100.0), random_range::<f32>(-100.0, 100.0)))
+        .start(random_xy(W as f32, H as f32))
+        .end(random_xy(W as f32 / 3.0, H as f32 / 3.0))
         .weight(0.1)
         .color(palette.colors[random_range::<usize>(0, 4)]);
 
@@ -41,10 +43,9 @@ fn view(app: &App, model: &Model, frame: Frame) {
             .radius(model.ellipse_offset);
     }
 
-    let rect = app.window_rect();
     draw.ellipse()
         .radius(random_range::<f32>(0.1, 1.0))
-        .xy(random_xy(rect.w(), rect.h()))
+        .xy(random_xy(W as f32, H as f32))
         .color(palette.colors[random_range::<usize>(0, 4)]);
 
     draw.to_frame(app, &frame).unwrap();
@@ -52,7 +53,7 @@ fn view(app: &App, model: &Model, frame: Frame) {
 
 fn model(app: &App) -> Model {
     app.set_loop_mode(LoopMode::NTimes { number_of_updates: 1000 });
-    app.new_window().size(600, 600).view(view).build().unwrap();
+    app.new_window().size(W, H).view(view).build().unwrap();
     Model {
         ellipse_offset: 1.0
     }
